@@ -5,6 +5,8 @@ const ip =  require('ip')
 
 main()
 
+var alarm
+
 async function main(){
     var settings = load_app_settings()
 
@@ -35,12 +37,18 @@ function init_webserver(){
         if(t != undefined){
             var cur = new Date().getTime()
             var ms_to_wait = t - cur
-            console.log("%s - %s = %s",t,cur,ms_to_wait)
+            clearTimeout(alarm)
+            alarm = setTimeout(alarm, ms_to_wait)
+            console.log("%s | %s until alarm",time(),ms_to_wait)
             res.sendStatus(201)
         }
     })
 
     return server
+}
+
+function alarm(){
+    console.log("%s | alarm",time())
 }
 
 function time(){
@@ -49,6 +57,6 @@ function time(){
 
 function start_webserver(server,port){
     return server.listen(port, function() {
-        console.info("%s | Server listening at http://%s:%s",new Date().getTime(),ip.address(), port)
+        console.info("%s | Server listening at http://%s:%s",time(),ip.address(), port)
     })
 }
