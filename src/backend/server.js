@@ -2,15 +2,19 @@ const express = require('express')
 const cors = require('cors')
 const fs = require("fs")
 const ip =  require('ip')
+var player = require("play-sound")(opts={});
 
 main()
 
 var alarm
+var audio
 
 async function main(){
     var settings = load_app_settings()
 
     var server = init_webserver();
+
+    alarm()
 
     start_webserver(server, settings.port);
 }
@@ -39,7 +43,7 @@ function init_webserver(){
             var ms_to_wait = t - cur
             clearTimeout(alarm)
             alarm = setTimeout(alarm, ms_to_wait)
-            console.log("%s | %s until alarm",time(),ms_to_wait)
+            console.log("%s | %d seconds until alarm",time(),ms_to_wait/1000)
             res.sendStatus(201)
         }
     })
@@ -49,6 +53,9 @@ function init_webserver(){
 
 function alarm(){
     console.log("%s | alarm",time())
+    player.play('./test.mp3', function(err){
+        if (err) throw err
+      });
 }
 
 function time(){
