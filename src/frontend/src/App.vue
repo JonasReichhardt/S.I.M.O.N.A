@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue"
 import Alarm from './components/Alarm.vue'
 
-const alarm_count = ref(0)
+const alarms = ref(0)
 
 async function fetchData() {
   const res = await fetch('http://localhost:8083/alarms',{method: 'get',
@@ -12,7 +12,7 @@ async function fetchData() {
   if (!res.ok) {
     alert(res.statusText)
   }
-  alarm_count.value = await res.json().size
+  alarms.value = await res.json().alarms
 }
 
 onMounted(() => {
@@ -24,8 +24,8 @@ onMounted(() => {
   <h1>S.I.M.O.N.A</h1>
   <h2>Since I make over nights already</h2>
 
-  <div v-for="alarm of alarm_count">
-    <Alarm></Alarm>
+  <div >
+    <Alarm v-for="alarm of alarms" :key="alarm.name"></Alarm>
   </div>
 </template>
 

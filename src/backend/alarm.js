@@ -1,31 +1,39 @@
 export default class Alarm{
-    source_time
-    target_time
-    #target_method
+    target_method
     #timeout
 
+    source_time
+    target_time
     ms_to_wait
     isActive
+    name
 
-    constructor(source_time,target_time, target_method){
-        this.source_time = source_time
-        this.#target_method = target_method
-        this.ms_to_wait = target_time - source_time
+    constructor(target_time, target_method,name){
+        this.source_time = new Date().getTime()
+        this.target_method = target_method
+        this.ms_to_wait = target_time - this.source_time
         this.target_time = target_time
         this.isActive = false
+        this.name = name
         this.activate()
     }
 
     deactivate(){
-        clearTimeout(this.timeout)
+        try { clearTimeout(this.#timeout) } catch (TypeError) { }
+    }
+
+    reset_time(new_time){
+        this.source_time = new Date().getTime()
+        this.target_time = new_time
+        this.ms_to_wait = this.target_time - this.source_time
+        this.deactivate()
+        this.activate()
     }
 
     activate(){
-        try{
-            this.#timeout = setTimeout(target_method,this.ms_to_wait)
+        if(this.ms_to_wait > 1){
+            this.#timeout = setTimeout(this.target_method,this.ms_to_wait)
             this.isActive = true
-        }catch{
-            console.log('Could not activate alarm %d',this.target_time)
         }
     }
 }
