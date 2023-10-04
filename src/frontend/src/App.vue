@@ -1,43 +1,32 @@
 <script setup>
-  import { ref } from 'vue'
-  const t = ref('')
+import { ref, onMounted } from "vue"
+import Alarm from './components/Alarm.vue'
 
-  function send(event){
-    const target_date = convertToTargetDateTime()
+const alarm_count = ref(0)
 
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ time: target_date, id: 0 })
-    };
-    fetch('http://localhost:8083/time', requestOptions)
-      .then(response => console.log(response.status))
+async function fetchData() {
+  const res = await fetch('http://localhost:8083/alarms',{method: 'get',
+    headers: {
+      'content-type': 'application/json'
+    }})
+  if (!res.ok) {
+    alert(res.statusText)
   }
+  alarm_count.value = await res.json().size
+}
 
-  function convertToTargetDateTime(){
-    var current_date = new Date()
-    var delimiter_index = t.value.indexOf(':')
-
-    var hour = parseInt(t.value.substring(0,delimiter_index+1))
-    var minute = parseInt(t.value.substring(delimiter_index+1))
-
-    current_date.setHours(hour)
-    current_date.setMinutes(minute)
-    current_date.setSeconds(0)
-
-    return current_date.getTime()
-  }
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <template>
-  <input v-model="t" type="time"/>
+  <h1>S.I.M.O.N.A</h1>
+  <h2>Since I make over nights already</h2>
 
-  <button @click="send">Send</button>
+  <div v-for="alarm of alarm_count">
+    <Alarm></Alarm>
+  </div>
 </template>
 
-<style scoped>
-  input[type=time] {
-    font-size: 36px;
-    width: 180px;
-  }
-</style>
+<style scoped></style>

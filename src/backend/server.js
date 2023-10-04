@@ -3,9 +3,9 @@ import cors from 'cors'
 import fs from 'fs'
 import ip from 'ip'
 import Alarm from './alarm.js'
-import WLED from './wled.js'
-import Blinds from './blinds.js'
-import Audio from './audio.js'
+import WLED from './integrations/wled.js'
+import Blinds from './integrations/blinds.js'
+import Audio from './integrations/audio.js'
 
 var alarms = []
 var settings
@@ -49,7 +49,6 @@ function load_state(){
         }
     } catch (err) {
         console.error("ERR| could not load app state")
-        console.error(err)
     }
     persist_state()
 }
@@ -59,7 +58,6 @@ function persist_state(){
         fs.writeFileSync('./state.json',JSON.stringify(alarms),'utf-8')
     }catch{
         console.error("ERR| could not persist app state")
-        console.error(err)
     }
 }
 
@@ -71,6 +69,7 @@ function init_webserver(){
     server.use(express.static('../frontend/dist'))
 
     server.post('/time', create_alarm)
+    server.get('/alarms',get_alarms)
 
     return server
 }
@@ -88,6 +87,10 @@ function create_alarm(req,res){
         console.log("%s | %d seconds until alarm",time(),alarms[id].ms_to_wait/1000)
         res.sendStatus(201)
     }
+}
+
+function get_alarms(req,res){
+    res.send({size: alarms.length});
 }
 
 function activation(){

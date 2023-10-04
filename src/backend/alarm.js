@@ -21,7 +21,11 @@ export default class Alarm{
     }
 
     activate(){
-        this.#timeout = setTimeout(target_method,this.ms_to_wait)
-        this.isActive = true
+        try{
+            this.#timeout = setTimeout(target_method,this.ms_to_wait)
+            this.isActive = true
+        }catch{
+            console.log('Could not activate alarm %d',this.target_time)
+        }
     }
 }
