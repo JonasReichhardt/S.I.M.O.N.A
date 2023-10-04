@@ -2,16 +2,19 @@ import express from 'express'
 import cors from 'cors'
 import fs from 'fs'
 import ip from 'ip'
-import fetch from 'node-fetch'
 import Alarm from './alarm.js'
+import WLED from './wled.js'
+import Blinds from './blinds.js'
+import Audio from './audio.js'
+
+var alarms = []
+var settings
 
 main()
 
-var alarms = []
-
 async function main(){
-    var settings = load_app_settings()
-    alarms = load_state()
+    load_app_settings()
+    load_state()
 
     var server = init_webserver();
 
@@ -22,7 +25,14 @@ async function main(){
 
 function load_app_settings(){
     try {
-        return JSON.parse(fs.readFileSync('appsettings.json', 'utf8'))
+        settings = JSON.parse(fs.readFileSync('appsettings.json', 'utf8'))
+        
+        var activeActions = []
+        if(settings.useaudio){ activeActions.push('Audio') }
+        if(settings.usewleds){ activeActions.push('LEDs') }
+        if(settings.useblinds){ activeActions.push('Blinds') }
+
+        console.log("%s | loaded appsettings using %s",time(),activeActions.join())
     } catch (err) {
         console.error("ERR| could not load app settings")
         console.error(err)
@@ -32,11 +42,16 @@ function load_app_settings(){
 function load_state(){
     try {
         var data = JSON.parse(fs.readFileSync('state.json', 'utf8'))
-        
+        for(const el of data){
+            if(el.target_time > new Date().getTime()){
+                alarms.push(new Alarm(el.source_time,el.target_time,activation))
+            }
+        }
     } catch (err) {
-        console.error("ERR| could not load app settings")
+        console.error("ERR| could not load app state")
         console.error(err)
     }
+    persist_state()
 }
 
 function persist_state(){
@@ -55,26 +70,41 @@ function init_webserver(){
     server.use(cors())
     server.use(express.static('../frontend/dist'))
 
-    server.post('/time', (req, res) => {
-        var target_time = req.body.time
-        var id = req.body.id
-
-        if(target_time != undefined && id != undefined){
-            try{ alarms[id].deactivate() }catch(TypeError){}
-            alarms.splice(id,1,new Alarm(new Date().getTime(),target_time,activation))
-            
-            persist_state()
-            console.log("%s | %d seconds until alarm",time(),alarms[id].ms_to_wait/1000)
-            
-            res.sendStatus(201)
-        }
-    })
+    server.post('/time', create_alarm)
 
     return server
 }
 
+function create_alarm(req,res){
+    var target_time = req.body.time
+    var id = req.body.id
+
+    if(target_time != undefined && id != undefined){
+        try{ alarms[id].deactivate() }catch(TypeError){}
+        alarms.splice(id,1,new Alarm(new Date().getTime(),target_time,activation))
+        
+        persist_state()
+        
+        console.log("%s | %d seconds until alarm",time(),alarms[id].ms_to_wait/1000)
+        res.sendStatus(201)
+    }
+}
+
 function activation(){
     console.log("%s | alarm",time())
+    if(settings.usewleds){
+        for(const led of settings.wleds){
+            WLED.activate(led)
+        }
+    }
+
+    if(settings.useblinds){
+        Blinds.open(settings.blinds_port)
+    }
+
+    if(settings.useaudio){
+        Audio.play(settings.audio)
+    }
 }
 
 function time(){
@@ -83,6 +113,6 @@ function time(){
 
 function start_webserver(server,port){
     return server.listen(port, function() {
-        console.info("%s | Server listening at http://%s:%s",time(),ip.address(), port)
+        console.info("%s | server listening at http://%s:%s",time(),ip.address(), port)
     })
 }
