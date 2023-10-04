@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import fs from 'fs'
 import ip from 'ip'
+import fetch from 'node-fetch'
 import Alarm from './alarm.js'
 
 main()
@@ -10,6 +11,7 @@ var alarms = []
 
 async function main(){
     var settings = load_app_settings()
+    alarms = load_state()
 
     var server = init_webserver();
 
@@ -27,9 +29,19 @@ function load_app_settings(){
     }
 }
 
+function load_state(){
+    try {
+        var data = JSON.parse(fs.readFileSync('state.json', 'utf8'))
+        
+    } catch (err) {
+        console.error("ERR| could not load app settings")
+        console.error(err)
+    }
+}
+
 function persist_state(){
     try{
-        JSON.stringify()
+        fs.writeFileSync('./state.json',JSON.stringify(alarms),'utf-8')
     }catch{
         console.error("ERR| could not persist app state")
         console.error(err)
@@ -48,11 +60,12 @@ function init_webserver(){
         var id = req.body.id
 
         if(target_time != undefined && id != undefined){
-            try{
-                alarms[id].deactivate()
-            }catch(TypeError){}
+            try{ alarms[id].deactivate() }catch(TypeError){}
             alarms.splice(id,1,new Alarm(new Date().getTime(),target_time,activation))
+            
+            persist_state()
             console.log("%s | %d seconds until alarm",time(),alarms[id].ms_to_wait/1000)
+            
             res.sendStatus(201)
         }
     })
