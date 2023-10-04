@@ -1,20 +1,19 @@
-const express = require('express')
-const cors = require('cors')
-const fs = require("fs")
-const ip =  require('ip')
-var player = require("play-sound")(opts={});
+import express from 'express'
+import cors from 'cors'
+import fs from 'fs'
+import ip from 'ip'
+import Alarm from './alarm.js'
 
 main()
 
-var alarm
-var audio
+var alarms = []
 
 async function main(){
     var settings = load_app_settings()
 
     var server = init_webserver();
 
-    alarm()
+    activation()
 
     start_webserver(server, settings.port);
 }
@@ -28,6 +27,15 @@ function load_app_settings(){
     }
 }
 
+function persist_state(){
+    try{
+        JSON.stringify()
+    }catch{
+        console.error("ERR| could not persist app state")
+        console.error(err)
+    }
+}
+
 function init_webserver(){
     var server = express()
 
@@ -36,14 +44,15 @@ function init_webserver(){
     server.use(express.static('../frontend/dist'))
 
     server.post('/time', (req, res) => {
-        var t = req.body.time
+        var target_time = req.body.time
+        var id = req.body.id
 
-        if(t != undefined){
-            var cur = new Date().getTime()
-            var ms_to_wait = t - cur
-            clearTimeout(alarm)
-            alarm = setTimeout(alarm, ms_to_wait)
-            console.log("%s | %d seconds until alarm",time(),ms_to_wait/1000)
+        if(target_time != undefined && id != undefined){
+            try{
+                alarms[id].deactivate()
+            }catch(TypeError){}
+            alarms.splice(id,1,new Alarm(new Date().getTime(),target_time,activation))
+            console.log("%s | %d seconds until alarm",time(),alarms[id].ms_to_wait/1000)
             res.sendStatus(201)
         }
     })
@@ -51,11 +60,8 @@ function init_webserver(){
     return server
 }
 
-function alarm(){
+function activation(){
     console.log("%s | alarm",time())
-    player.play('./test.mp3', function(err){
-        if (err) throw err
-      });
 }
 
 function time(){

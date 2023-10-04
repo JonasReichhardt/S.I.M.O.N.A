@@ -8,7 +8,7 @@
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ time: target_date })
+      body: JSON.stringify({ time: target_date, id: 0 })
     };
     fetch('http://localhost:8083/time', requestOptions)
       .then(response => console.log(response.status))
@@ -23,6 +23,7 @@
 
     current_date.setHours(hour)
     current_date.setMinutes(minute)
+    current_date.setSeconds(0)
 
     return current_date.getTime()
   }

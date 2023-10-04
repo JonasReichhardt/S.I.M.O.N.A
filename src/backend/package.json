@@ -2,6 +2,7 @@
   "name": "simona",
   "version": "0.0.1",
   "description": "S.I.M.O.N.A backend",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
