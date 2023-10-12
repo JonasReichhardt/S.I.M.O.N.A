@@ -1,4 +1,4 @@
-export default class Alarm{
+export default class Alarm {
     id
     target_method
     #timeout
@@ -6,9 +6,8 @@ export default class Alarm{
     #ms_to_wait
     isActive
     name
-    settings
 
-    constructor(target_time, target_method,id,name){
+    constructor(target_time, target_method, id, name) {
         this.target_method = target_method
         this.target_time = target_time
         this.isActive = false
@@ -16,26 +15,33 @@ export default class Alarm{
         this.id = id
     }
 
-    deactivate(){
-        try { clearTimeout(this.#timeout); this.isActive = false } catch (TypeError) { }
+    deactivate() {
+        try {
+            clearTimeout(this.#timeout); this.isActive = false;
+            console.log("%s | cleared timeout", this.name); return true
+        } catch (TypeError) { return false }
     }
 
-    reset_time(new_time){
+    reset_time(new_time) {
         var source_time = new Date().getTime()
         this.target_time = new_time
         this.#ms_to_wait = this.target_time - source_time
-        if(this.isActive){
+        console.log("reseting timer")
+        if (this.isActive) {
             this.deactivate()
             this.activate()
         }
     }
 
-    activate(){
+    activate() {
         var source_time = new Date().getTime()
         this.#ms_to_wait = this.target_time - source_time
-        if(this.ms_to_wait > 1){
-            this.#timeout = setTimeout(this.target_method,this.ms_to_wait)
+        if (this.#ms_to_wait > 1) {
+            console.log("%s | setting timeout for %s minutes", this.name, this.#ms_to_wait / 1000 / 60)
+            this.#timeout = setTimeout(this.target_method.bind(this,this), this.#ms_to_wait)
             this.isActive = true
+            return true
         }
+        return false
     }
 }
