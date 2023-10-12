@@ -7,7 +7,8 @@ import WLED from './integrations/wled.js'
 import Blinds from './integrations/blinds.js'
 import Audio from './integrations/audio.js'
 
-var alarms = [new Alarm(0,activation,"WakeUp")]
+//var alarms = [new Alarm(0,activation,0,"WakeUp")]
+var alarms = []
 var settings
 
 main()
@@ -41,8 +42,9 @@ function load_state() {
     try {
         var data = JSON.parse(fs.readFileSync('state.json', 'utf8'))
         for (const el of data) {
-            alarms.push(new Alarm(el.target_time, activation,"test"))
+            alarms.push(new Alarm(el.target_time, activation,el.id,el.name))
         }
+        console.log("%s | loaded %s alarm(s)",time(),alarms.length)
     } catch (err) {
         console.error("ERR| could not load app state")
     }
@@ -64,23 +66,58 @@ function init_webserver() {
     server.use(cors())
     server.use(express.static('../frontend/dist'))
 
-    server.post('/time', create_alarm)
+    server.post('/alarms', create_alarm)
     server.get('/alarms', get_alarms)
+    server.post('/activate',activate_alarm)
+    server.post('/deactivate',deactivate_alarm)
 
     return server
 }
 
-function create_alarm(req, res) {
-    var target_time = req.body.time
+function deactivate_alarm(req,res){
     var id = req.body.id
 
-    if (target_time != undefined && id != undefined) {
-        alarms[id].reset_time(target_time)
-        persist_state()
-
-        console.log("%s | %d seconds until alarm", time(), alarms[id].ms_to_wait / 1000)
-        res.sendStatus(201)
+    if(id==undefined || id < 0 || id > alarms.length){
+        res.sendStatus(404)
+        return
     }
+
+    alarms[id].deactivate()
+}
+
+function activate_alarm(req,res){
+    var id = req.body.id
+
+    if(id==undefined || id < 0 || id > alarms.length){
+        res.sendStatus(404)
+        return
+    }
+
+    alarms[id].activate()
+}
+
+function create_alarm(req, res) {
+    var id = req.body.id
+    var target_time = req.body.time
+    var name = req.body.name
+
+    
+    if(id == undefined){
+        // create new alarm
+
+        alarms.push(new Alarm(target_time,activation,alarms.length,name))
+        console.log("%s | created alarm %s", time(), name)
+
+    }else if(id > -1 && id <= alarms.length){
+        // update existing alarm
+
+        alarms[id].reset_time(target_time)
+        alarms[id].name = name
+        console.log("%s | updated alarm %s", time(), name)
+    }
+    
+    persist_state()
+    res.sendStatus(201)
 }
 
 function get_alarms(req, res) {
