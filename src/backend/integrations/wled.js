@@ -1,30 +1,30 @@
 import fetch from 'node-fetch'
 import fs from 'fs'
 
-export default class WLED{
-    static async activate(ip){
-        var body
-        fs.readFile('wled.json', 'utf8',(err,data)=>{
-            if(err){
+export default class WLED {
+    static async activate(ip,config_path) {
+        var data = fs.readFileSync(config_path, 'utf8', (err) => {
+            if (err) {
                 console.error(err)
             }
-            body = JSON.parse(data)
         })
-        try{
-            var response = await fetch('http://'+ip+'/json/state', {
+        var body = JSON.stringify(JSON.parse(data))
+
+        try {
+            await fetch('http://' + ip + '/json', {
                 method: 'post',
                 body: body,
-                headers: {'Content-Type': 'application/json'}
-            });
-        }catch{
-            console.log('%s could not be reached',ip)
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(res => res.json())
+                .then((body) => {
+                    if (!body.success) { 
+                        console.error('%s lights could not be turned on', ip) 
+                    }
+                });
+        } catch {
+            console.error('%s could not be reached', ip)
             return
-        }
-
-        if(response.ok){
-            console.log('%s on',ip)
-        }else{
-            console.log('%s could not turned on',ip)
         }
     }
 }

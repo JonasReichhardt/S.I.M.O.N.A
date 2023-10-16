@@ -7,6 +7,8 @@ import WLED from './integrations/wled.js'
 import Blinds from './integrations/blinds.js'
 import Audio from './integrations/audio.js'
 
+const wled_config = './integrations/wled.json'
+
 //var alarms = [new Alarm(0,activation,0,'WakeUp')]
 var alarms = []
 var settings
@@ -166,7 +168,7 @@ function activation(alarm) {
 
     if (settings.usewleds) {
         for (const led of settings.wleds) {
-            WLED.activate(led)
+            WLED.activate(led,wled_config)
         }
     }
 
