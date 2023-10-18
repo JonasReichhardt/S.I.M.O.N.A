@@ -1,5 +1,7 @@
 <script setup>
 import { ref, onMounted, onActivated } from 'vue'
+import DataProvider from '../DataProvider';
+import TimeHelper from '../TimeHelper';
 const time_picker = ref('')
 const alarm = defineProps(['id', 'name', 'targetTime', 'isActive'])
 const emit = defineEmits(['onDataFetch'])
@@ -14,77 +16,30 @@ function update(event) {
     if (target_date == undefined) {
         return
     }
-
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ time: target_date, id: alarm.id, name: alarm.name })
-    };
-    fetch('http://localhost:8083/alarms', requestOptions)
-        .then(response => { if (!response.ok) { alert("Error updating alarm") } })
+    DataProvider.UpdateAlarm(target_date, alarm.id, alarm.name)
 }
 
 function activate() {
     if (!alarm.isActive) {
-        var activation_request_options = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: alarm.id })
-        };
-        fetch('http://localhost:8083/activate', activation_request_options)
-            .then(response => { if (!response.ok) { alert("Error activating alarm") } })
+        DataProvider.ChangeAlarmState(1, alarm.id)
         emit('onDataFetch')
     }
 }
 
 function deactivate() {
     if (alarm.isActive) {
-        var activation_request_options = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: alarm.id })
-        };
-        fetch('http://localhost:8083/deactivate', activation_request_options)
-            .then(response => { if (!response.ok) { alert("Error deactivating alarm") } })
+        DataProvider.ChangeAlarmState(0, alarm.id)
         emit('onDataFetch')
     }
 }
 
 function convertFromTargetDateTime() {
-    var date = new Date(alarm.targetTime)
-    var str = ''
-    if (date.getHours() < 10) {
-        str = str + '0' + date.getHours()
-    } else {
-        str = date.getHours()
-    }
-    str = str + ':'
-    if (date.getMinutes() < 10) {
-        str = str + '0' + date.getMinutes()
-    } else {
-        str = str + date.getMinutes()
-    }
-    time_picker.value = str
+    time_picker.value = TimeHelper.ConvertToTimeString(alarm.targetTime)
 }
 
 function convertToTargetDateTime() {
     if (time_picker.value == '') { return }
-    var current_date = new Date()
-    var delimiter_index = time_picker.value.indexOf(':')
-
-    var hour = parseInt(time_picker.value.substring(0, delimiter_index + 1))
-    var minute = parseInt(time_picker.value.substring(delimiter_index + 1))
-
-    current_date.setHours(hour)
-    current_date.setMinutes(minute)
-    current_date.setSeconds(0)
-
-    var target_date = current_date
-    if(current_date.getTime() < new Date().getTime()){
-        target_date = new Date(current_date.getTime() + 86400000)
-    }
-
-    return target_date.getTime()
+    return TimeHelper.ConvertToTimestamp(time_picker.value)
 }
 </script>
 
