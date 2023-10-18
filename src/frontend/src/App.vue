@@ -9,6 +9,7 @@ const alarms = ref([])
 const time_picker = ref('')
 const name = ref('')
 const index = ref('')
+const file = ref(null)
 
 function addAlarm() {
   var t = convertToTargetDateTime()
@@ -44,6 +45,14 @@ function fetchData() {
 onMounted(() => {
   fetchData()
 })
+
+function onFileChanged(event){
+  file.value = event.target.files[0]
+}
+
+function uploadFile(){
+  DataProvider.UploadAudio(file.value)
+}
 </script>
 
 <template>
@@ -65,6 +74,9 @@ onMounted(() => {
     <h3>Delete Alarm</h3>
     <p>Index</p><input v-model="index" type="number" />
     <button @click="deleteAlarm">-</button>
+    <h3>Upload alarm sound</h3>
+    <input type="file" @change="onFileChanged($event)" accept="audio/*" capture/>
+    <button @click="uploadFile">Upload</button>
   </div>
 </template>
 
@@ -75,7 +87,7 @@ onMounted(() => {
   color: brown;
 }
 
-input {
+input[time] {
   font-size: 36px;
   width: 180px;
 }

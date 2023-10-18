@@ -46,7 +46,7 @@ export default  class DataProvider {
         }
 
         fetch(url, requestOptions)
-            .then(response => { if (!response.ok) { alert('Error exectuting '+url) } })
+            .then(response => { if (!response.ok) { alert('Error executing '+url) } })
     }
 
     static DeleteAlarm(index){
@@ -57,5 +57,16 @@ export default  class DataProvider {
         }
         fetch(import.meta.env.VITE_API_ENDPOINT+'/alarms', requestOptions)
             .then(response => { if (!response.ok) { alert('Error deleting alarm') } })
+    }
+
+    static UploadAudio(file){
+        var body = new FormData()
+        body.append('audio',file)
+        const requestOptions = {
+            method: 'POST',
+            body: body
+        }
+        fetch(import.meta.env.VITE_API_ENDPOINT+'/audio', requestOptions)
+            .then(response => { if (!response.ok) { alert('Error uploding file') } })
     }
 }

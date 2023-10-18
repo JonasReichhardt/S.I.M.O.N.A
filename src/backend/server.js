@@ -28,10 +28,16 @@ async function main() {
 //#region endpoint functions
 function upload_file(req,res){
     var file = req.files.audio
-    if(!file.name.endsWith('.mp3')){
+
+    if(file == undefined){
         res.sendStatus(403)
         return
     }
+
+    fs.writeFile(settings.audio.storage+'/'+file.name,file.data,(err)=>{
+        if(err){console.log(err)}
+    })
+
     res.sendStatus(200)
 }
 
@@ -175,7 +181,7 @@ function init_webserver() {
     server.delete('/alarms',delete_alarm)
     server.post('/activate', activate_alarm)
     server.post('/deactivate', deactivate_alarm)
-    server.post('/files',upload_file)
+    server.post('/audio',upload_file)
 
     return server
 }
