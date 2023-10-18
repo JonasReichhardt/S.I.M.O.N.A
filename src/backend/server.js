@@ -1,4 +1,5 @@
 import express from 'express'
+import fileUpload from 'express-fileupload'
 import cors from 'cors'
 import fs from 'fs'
 import ip from 'ip'
@@ -25,6 +26,15 @@ async function main() {
 }
 
 //#region endpoint functions
+function upload_file(req,res){
+    var file = req.files.audio
+    if(!file.name.endsWith('.mp3')){
+        res.sendStatus(403)
+        return
+    }
+    res.sendStatus(200)
+}
+
 function deactivate_alarm(req, res) {
     var id = req.body.id
 
@@ -157,6 +167,7 @@ function init_webserver() {
 
     server.use(express.json())
     server.use(cors())
+    server.use(fileUpload())
     server.use(express.static('../frontend/dist'))
 
     server.post('/alarms', create_alarm)
@@ -164,6 +175,7 @@ function init_webserver() {
     server.delete('/alarms',delete_alarm)
     server.post('/activate', activate_alarm)
     server.post('/deactivate', deactivate_alarm)
+    server.post('/files',upload_file)
 
     return server
 }
