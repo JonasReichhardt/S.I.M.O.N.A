@@ -1,1 +1,1 @@
-mpg321 test.mp3
+mpg321 ../persistence/audio/test.mp3
