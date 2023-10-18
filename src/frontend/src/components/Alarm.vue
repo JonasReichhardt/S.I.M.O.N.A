@@ -70,7 +70,7 @@ h4 {
 }
 
 button {
-    font-size: 30px;
-    width: 180px;
+    font-size: 36px;
+    width: 150px;
 }
 </style>
