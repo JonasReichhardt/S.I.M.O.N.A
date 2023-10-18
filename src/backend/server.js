@@ -21,7 +21,7 @@ async function main() {
     load_state()
 
     var server = init_webserver();
-
+    
     start_webserver(server, settings.port);
 }
 
@@ -193,23 +193,23 @@ function start_webserver(server, port) {
 }
 
 function activation(alarm) {
-    alarm.deactivate()
+    //alarm.deactivate()
     
     var message = `${time()} | alarm`
     console.log(message)
     log_activation(message)
 
-    if (settings.wled.activate) {
+    if (settings.wled.active) {
         for (const led of settings.wled.instances) {
             WLED.activate(led,wled_config)
         }
     }
 
-    if (settings.blinds.activate) {
+    if (settings.blinds.active) {
         Blinds.open(settings.blinds.instance)
     }
 
-    if (settings.audio.activate) {
+    if (settings.audio.active) {
         Audio.play(settings.audio.file, settings.audio.duration)
     }
 }
