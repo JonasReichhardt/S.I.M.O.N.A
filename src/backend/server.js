@@ -87,6 +87,20 @@ function get_alarms(req, res) {
     res.send({ alarms: alarms });
 }
 
+function delete_alarm(req,res){
+    var index = req.body.index
+
+    if(index == null || index == undefined || index > alarms.length || index < 0){
+        res.sendStatus(204)
+        return
+    }
+
+    alarms.splice(index,1)
+    persist_state()
+    
+    res.sendStatus(200)
+}
+
 //#endregion
 
 function load_app_settings() {
@@ -147,6 +161,7 @@ function init_webserver() {
 
     server.post('/alarms', create_alarm)
     server.get('/alarms', get_alarms)
+    server.delete('/alarms',delete_alarm)
     server.post('/activate', activate_alarm)
     server.post('/deactivate', deactivate_alarm)
 

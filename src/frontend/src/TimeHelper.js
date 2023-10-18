@@ -1,7 +1,6 @@
 export default class TimeHelper{
 
-    // example string 12:00
-    // converts a time string to a UNIX timestamp
+    // converts a time string (e.g HH:MM) to a UNIX timestamp
     static ConvertToTimestamp(timeString){
         const delimiter_index = timeString.indexOf(':')
         const hour = parseInt(timeString.substring(0, delimiter_index + 1))
@@ -22,6 +21,7 @@ export default class TimeHelper{
         return target_timestamp
     }
 
+    // converts UNIX timestamp in following formated string HH:MM
     static ConvertToTimeString(timestamp){
         var date = new Date(timestamp)
         var str = ''

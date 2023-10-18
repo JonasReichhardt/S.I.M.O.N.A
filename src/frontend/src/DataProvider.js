@@ -1,17 +1,22 @@
 
 export default  class DataProvider {
 
-    static async GetAllAlarms() {
-        console.log(import.meta.env.VITE_API_ENDPOINT+'/alarms')
-        var res = await fetch(import.meta.env.VITE_API_ENDPOINT+'/alarms')
-        if(res.ok){
-            var data = await res.json()
-            return data
-        }
+    static GetAllAlarmsPromise() {
+        return fetch(import.meta.env.VITE_API_ENDPOINT+'/alarms')
     }
 
-    static async PushAlarm(requestOptions){
-        fetch(import.meta.env.VITE_API_ENDPOINT+'alarms', requestOptions)
+    static async GetAllAlarms(){
+        var res = await this.GetAllAlarmsPromise()
+        return (await res.json()).alarms
+    }
+
+    static async PushAlarm(time,name){
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ time: time, name: name })
+          };
+        fetch(import.meta.env.VITE_API_ENDPOINT+'/alarms', requestOptions)
         .then(response => { if (!response.ok) { alert("Error posting alarm") }})
     }
 
@@ -42,5 +47,15 @@ export default  class DataProvider {
 
         fetch(url, requestOptions)
             .then(response => { if (!response.ok) { alert('Error exectuting '+url) } })
+    }
+
+    static DeleteAlarm(index){
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ index: index })
+        }
+        fetch(import.meta.env.VITE_API_ENDPOINT+'/alarms', requestOptions)
+            .then(response => { if (!response.ok) { alert('Error deleting alarm') } })
     }
 }

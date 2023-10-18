@@ -5,40 +5,40 @@ import DataProvider from './DataProvider'
 import TimeHelper from "./TimeHelper";
 
 
-const alarms = ref(null)
+const alarms = ref([])
 const time_picker = ref('')
 const name = ref('')
 const index = ref('')
 
-async function fetchData() {
-  alarms.value = await DataProvider.GetAllAlarms()
-}
-
 function addAlarm() {
   var t = convertToTargetDateTime()
   var n = name.value
-  if (t == undefined || t == null || n == '') {
+  if (t == undefined || t == null || n == undefined || n == '') {
+    alert('time or name of the alarm is undefined')
     return
   }
-  const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ time: t, name: n })
-  };
-  DataProvider.PushAlarm(requestOptions)
-  DataProvider.GetAllAlarms()
+  DataProvider.PushAlarm(t, n)
+  fetchData()
 }
 
 function deleteAlarm() {
   var i = index.value
   if (i > 0 || i <= alarms.value.length) {
-    console.log("delete %d alarm", i)
+    DataProvider.DeleteAlarm(i)
+    fetchData()
   }
 }
 
 function convertToTargetDateTime() {
   if (time_picker.value == '') { return }
   return TimeHelper.ConvertToTimestamp(time_picker.value)
+}
+
+function fetchData() {
+  DataProvider.GetAllAlarmsPromise().then(res=> res.json())
+    .then((data) => {
+      alarms.value = data.alarms
+    })
 }
 
 onMounted(() => {
@@ -52,9 +52,9 @@ onMounted(() => {
 
   <div>
     <h3>Overview</h3>
-    <Alarm @onDataFetch="fetchData" v-for="a of alarms" :id="a.id" :name="a.name" :targetTime="a.target_time"
-      :isActive="a.isActive"></Alarm>
-    <h1 class="error" v-if="alarms == null">API connection failed</h1>
+    <Alarm @onDataFetch="fetchData" v-for="a of alarms" :id="a.id" :name="a.name"
+      :targetTime="a.target_time" :isActive="a.isActive" />
+    <h1 class="error" v-if="alarms.length == 0">Loading data</h1>
   </div>
 
   <div>

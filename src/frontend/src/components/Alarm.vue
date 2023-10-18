@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onActivated } from 'vue'
+import { ref, onMounted } from 'vue'
 import DataProvider from '../DataProvider';
 import TimeHelper from '../TimeHelper';
 const time_picker = ref('')
@@ -34,7 +34,8 @@ function deactivate() {
 }
 
 function convertFromTargetDateTime() {
-    time_picker.value = TimeHelper.ConvertToTimeString(alarm.targetTime)
+    var t = TimeHelper.ConvertToTimeString(alarm.targetTime)
+    time_picker.value = t 
 }
 
 function convertToTargetDateTime() {
