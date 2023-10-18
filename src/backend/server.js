@@ -108,9 +108,9 @@ function load_app_settings() {
         settings = JSON.parse(fs.readFileSync('appsettings.json', 'utf8'))
 
         var activeActions = []
-        if (settings.useaudio) { activeActions.push('Audio') }
-        if (settings.usewleds) { activeActions.push('LEDs') }
-        if (settings.useblinds) { activeActions.push('Blinds') }
+        if (settings.audio.active) { activeActions.push('Audio') }
+        if (settings.wled.activate) { activeActions.push('LEDs') }
+        if (settings.blinds.activate) { activeActions.push('Blinds') }
 
         console.log('%s | loaded appsettings using %s', time(), activeActions.join())
     } catch (err) {
@@ -181,18 +181,18 @@ function activation(alarm) {
     console.log(message)
     log_activation(message)
 
-    if (settings.usewleds) {
-        for (const led of settings.wleds) {
+    if (settings.wled.activate) {
+        for (const led of settings.wled.instances) {
             WLED.activate(led,wled_config)
         }
     }
 
-    if (settings.useblinds) {
-        Blinds.open(settings.blinds_port)
+    if (settings.blinds.activate) {
+        Blinds.open(settings.blinds.instance)
     }
 
-    if (settings.useaudio) {
-        Audio.play(settings.audio)
+    if (settings.audio.activate) {
+        Audio.play(settings.audio.file, settings.audio.duration)
     }
 }
 
