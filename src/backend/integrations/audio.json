@@ -1,0 +1,8 @@
+{
+    "win32" :{
+        "command": "start"
+    },
+    "posix":{
+        "command": "mpg321"
+    }
+}

@@ -2,8 +2,10 @@ import fetch from 'node-fetch'
 import fs from 'fs'
 
 export default class WLED {
-    static async activate(ip,config_path) {
-        var data = fs.readFileSync(config_path, 'utf8', (err) => {
+    static get CONFIG_PATH() {return './integrations/wled.json'}
+
+    static async activate(ip) {
+        var data = fs.readFileSync(this.CONFIG_PATH, 'utf8', (err) => {
             if (err) {
                 console.error(err)
             }

@@ -8,8 +8,6 @@ import WLED from './integrations/wled.js'
 import Blinds from './integrations/blinds.js'
 import Audio from './integrations/audio.js'
 
-const wled_config = './integrations/wled.json'
-
 //var alarms = [new Alarm(0,activation,0,'WakeUp')]
 var alarms = []
 var settings
@@ -21,7 +19,7 @@ async function main() {
     load_state()
 
     var server = init_webserver();
-    
+    activation(null)
     start_webserver(server, settings.port);
 }
 
@@ -200,8 +198,8 @@ function activation(alarm) {
     log_activation(message)
 
     if (settings.wled.active) {
-        for (const led of settings.wled.instances) {
-            WLED.activate(led,wled_config)
+        for (const led_ip of settings.wled.instances) {
+            WLED.activate(led_ip)
         }
     }
 
@@ -210,7 +208,7 @@ function activation(alarm) {
     }
 
     if (settings.audio.active) {
-        Audio.play(settings.audio.file, settings.audio.duration)
+        Audio.play(settings.audio.storage,settings.audio.file)
     }
 }
 
