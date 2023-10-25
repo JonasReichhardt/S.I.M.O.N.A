@@ -7,11 +7,7 @@ export default class Audio {
     static get CONFIG_PATH() {return './integrations/audio.json'}
 
     static async play(storage,file) {
-        var command = load_command() + ' ' + path.join(storage,file)
-        
-        console.log('executing command: %s',command)
-        
-        execute_command(command)
+        execute_command(load_command() + ' ' + path.join(storage,file))
     }
 }
 
@@ -19,7 +15,6 @@ function execute_command(command){
     child_process.exec(command, (error, stdout, stderr) => {
         if (error) { console.error(error.message); return }
         if (stderr) { console.error(stderr); return }
-        if(stdout){ console.log(stdout) }
     })
 }
 
