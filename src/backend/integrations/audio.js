@@ -14,7 +14,6 @@ export default class Audio {
 function execute_command(command){
     child_process.exec(command, (error, stdout, stderr) => {
         if (error) { console.error(error.message); return }
-        if (stderr) { console.error(stderr); return }
     })
 }
 
