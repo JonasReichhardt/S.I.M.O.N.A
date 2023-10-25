@@ -13,6 +13,10 @@ echo -e "${green}${bold}[Building frontend application]${reset}"
 echo -e "${green}Installing dependencies...${reset}"
 cd src/frontend
 npm install
+echo -e "${green}Replacing ip address...${reset}"
+newip=$(ifconfig | grep 0xfff | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | grep -v 255)
+echo "new ip:$newip"
+sed 's/*\.*\.*\.*/"$newip"/g'
 echo -e "${green}Building application...${reset}"
 npm run build
 echo " "

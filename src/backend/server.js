@@ -159,7 +159,7 @@ function persist_state() {
 }
 
 function log_activation(message){
-    fs.appendFile('./persistence/log.txt', '\r\n'+message+'\r\n', 'utf-8', (err) => {
+    fs.appendFile('./persistence/log.txt', 'message\r\n', 'utf-8', (err) => {
         if (err) {
             console.error(err)
         }
