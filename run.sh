@@ -16,7 +16,7 @@ npm install
 echo -e "${green}Replacing ip address...${reset}"
 newip=$(hostname -I)
 echo $newip
-sed -i 's/PROD_IP/"$newip"/g' .env.production
+sed -i 's/PROD_IP'/"$newip"/ .env.production
 cat .env.production
 echo " "
 echo -e "${green}Building application...${reset}"
