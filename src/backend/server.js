@@ -126,7 +126,7 @@ function load_app_settings() {
         if (settings.wled.activate) { activeActions.push('LEDs') }
         if (settings.blinds.activate) { activeActions.push('Blinds') }
 
-        console.log('%s | loaded appsettings using %s', time(), activeActions.join())
+        console.log('%s | loaded appsettings using [%s] integrations', time(), activeActions.join())
     } catch (err) {
         console.error('ERR| could not load app settings')
         console.error(err)

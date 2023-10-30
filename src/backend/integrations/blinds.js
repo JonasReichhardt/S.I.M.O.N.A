@@ -1,6 +1,6 @@
 export default class Blinds{
 
-    static async open(port){
-        //TODO insert code for blinds activation
+    static async open(ip){
+        await fetch('http://' + ip + '/open').then(res => res.text()).then((body)=>console.log(body))
     }
 }
