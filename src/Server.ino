@@ -13,8 +13,8 @@
 #define stepsPerRev 200
 
 #ifndef STASSID
-#define STASSID "WIFI"
-#define STAPSK "WIFI"
+#define STASSID "SSID"
+#define STAPSK "PASSWD"
 #endif
 
 // Create a new instance of the AccelStepper class:
@@ -38,7 +38,7 @@ void handleNotFound() {
 }
 
 void setup(void) {
-  stepper.setMaxSpeed(500);
+  stepper.setMaxSpeed(400);
   stepper.setAcceleration(250);
   pinMode(sleepPin, OUTPUT);
   digitalWrite(sleepPin, LOW);
@@ -68,8 +68,9 @@ void setup(void) {
   server.on("/open", []() {
     digitalWrite(sleepPin, HIGH);
     delay(5);
-    stepper.runToNewPosition(stepsPerRev * 10);
+    stepper.runToNewPosition(stepsPerRev * 7);
     digitalWrite(sleepPin, LOW);
+    stepper.setCurrentPosition(0);
     server.send(200, "text/plain", "Opening");
   });
 
