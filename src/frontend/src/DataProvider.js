@@ -69,4 +69,14 @@ export default  class DataProvider {
         fetch(import.meta.env.VITE_API_ENDPOINT+'/audio', requestOptions)
             .then(response => { if (!response.ok) { alert('Error uploding file') } })
     }
+
+    static TriggerAlarm(id){
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        }
+        fetch(import.meta.env.VITE_API_ENDPOINT+'/trigger', requestOptions)
+            .then(response => { if (!response.ok) { alert('Error triggering alarm') } })
+    }
 }

@@ -8,8 +8,8 @@ import WLED from './integrations/wled.js'
 import Blinds from './integrations/blinds.js'
 import Audio from './integrations/audio.js'
 
-//var alarms = [new Alarm(0,activation,0,'WakeUp')]
-var alarms = []
+var alarms = [new Alarm(0,activation,0,'WakeUp')]
+//var alarms = []
 var settings
 
 main()
@@ -19,11 +19,23 @@ async function main() {
     load_state()
 
     var server = init_webserver();
-    activation(null)
     start_webserver(server, settings.port);
 }
 
 //#region endpoint functions
+function trigger_alarm(req,res){
+    var id = req.body.id
+
+    if (id == undefined || id < 0 || id > alarms.length) {
+        res.sendStatus(404)
+        return
+    }
+
+    // call activation function
+    activation(alarms[id])
+    res.sendStatus(200)
+}
+
 function upload_file(req,res){
     var file = req.files.audio
 
@@ -180,6 +192,7 @@ function init_webserver() {
     server.post('/activate', activate_alarm)
     server.post('/deactivate', deactivate_alarm)
     server.post('/audio',upload_file)
+    server.post('/trigger',trigger_alarm)
 
     return server
 }
@@ -191,9 +204,10 @@ function start_webserver(server, port) {
 }
 
 function activation(alarm) {
-    //alarm.deactivate()
-    
-    var message = `${time()} | alarm`
+    if(alarm != undefined && alarm != null){
+        alarm.deactivate()   
+    }
+    var message = `${time()} | ${alarm.name} activated`
     console.log(message)
     log_activation(message)
 
