@@ -8,8 +8,8 @@ import WLED from './integrations/wled.js'
 import Blinds from './integrations/blinds.js'
 import Audio from './integrations/audio.js'
 
-var alarms = [new Alarm(0,activation,0,'WakeUp')]
-//var alarms = []
+//var alarms = [new Alarm(0, activation, 0, 'WakeUp', 1)]
+var alarms = []
 var settings
 
 main()
@@ -23,7 +23,7 @@ async function main() {
 }
 
 //#region endpoint functions
-function trigger_alarm(req,res){
+function trigger_alarm(req, res) {
     var id = req.body.id
 
     if (id == undefined || id < 0 || id > alarms.length) {
@@ -36,16 +36,16 @@ function trigger_alarm(req,res){
     res.sendStatus(200)
 }
 
-function upload_file(req,res){
+function upload_file(req, res) {
     var file = req.files.audio
 
-    if(file == undefined){
+    if (file == undefined) {
         res.sendStatus(403)
         return
     }
 
-    fs.writeFile(settings.audio.storage+'/'+file.name,file.data,(err)=>{
-        if(err){console.log(err)}
+    fs.writeFile(settings.audio.storage + '/' + file.name, file.data, (err) => {
+        if (err) { console.log(err) }
     })
 
     res.sendStatus(200)
@@ -89,17 +89,15 @@ function create_alarm(req, res) {
     var id = req.body.id
     var target_time = req.body.time
     var name = req.body.name
-
+    var wled = req.body.wled
 
     if (id == undefined) {
         // create new alarm
-
-        alarms.push(new Alarm(target_time, activation, alarms.length, name))
+        alarms.push(new Alarm(target_time, activation, alarms.length, name, wled))
         console.log('%s | created alarm %s', time(), name)
 
     } else if (id > -1 && id <= alarms.length) {
         // update existing alarm
-
         alarms[id].reset_time(target_time)
         alarms[id].name = name
         console.log('%s | updated alarm %s', time(), name)
@@ -113,17 +111,17 @@ function get_alarms(req, res) {
     res.send({ alarms: alarms });
 }
 
-function delete_alarm(req,res){
+function delete_alarm(req, res) {
     var index = req.body.index
 
-    if(index == null || index == undefined || index > alarms.length || index < 0){
+    if (index == null || index == undefined || index > alarms.length || index < 0) {
         res.sendStatus(204)
         return
     }
 
-    alarms.splice(index,1)
+    alarms.splice(index, 1)
     persist_state()
-    
+
     res.sendStatus(200)
 }
 
@@ -149,8 +147,8 @@ function load_state() {
     try {
         var data = JSON.parse(fs.readFileSync('./persistence/state.json', 'utf8'))
         for (const el of data) {
-            var alarm = new Alarm(el.target_time, activation, el.id, el.name)
-            if(el.isActive){
+            var alarm = new Alarm(el.target_time, activation, el.id, el.name,el.wled)
+            if (el.isActive) {
                 alarm.activate()
             }
             alarms.push(alarm)
@@ -170,7 +168,7 @@ function persist_state() {
     })
 }
 
-function log_activation(message){
+function log_activation(message) {
     fs.appendFile('./persistence/log.txt', 'message\r\n', 'utf-8', (err) => {
         if (err) {
             console.error(err)
@@ -188,11 +186,11 @@ function init_webserver() {
 
     server.post('/alarms', create_alarm)
     server.get('/alarms', get_alarms)
-    server.delete('/alarms',delete_alarm)
+    server.delete('/alarms', delete_alarm)
     server.post('/activate', activate_alarm)
     server.post('/deactivate', deactivate_alarm)
-    server.post('/audio',upload_file)
-    server.post('/trigger',trigger_alarm)
+    server.post('/audio', upload_file)
+    server.post('/trigger', trigger_alarm)
 
     return server
 }
@@ -204,8 +202,8 @@ function start_webserver(server, port) {
 }
 
 function activation(alarm) {
-    if(alarm != undefined && alarm != null){
-        alarm.deactivate()   
+    if (alarm != undefined && alarm != null) {
+        alarm.deactivate()
     }
     var message = `${time()} | ${alarm.name} activated`
     console.log(message)
@@ -213,7 +211,7 @@ function activation(alarm) {
 
     if (settings.wled.active) {
         for (const led_ip of settings.wled.instances) {
-            WLED.activate(led_ip)
+            WLED.activate(led_ip,alarm.wled)
         }
     }
 
@@ -222,7 +220,7 @@ function activation(alarm) {
     }
 
     if (settings.audio.active) {
-        Audio.play(settings.audio.storage,settings.audio.file)
+        Audio.play(settings.audio.storage, settings.audio.file)
     }
 }
 

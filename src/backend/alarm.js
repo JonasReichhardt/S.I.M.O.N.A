@@ -6,13 +6,15 @@ export default class Alarm {
     #ms_to_wait
     isActive
     name
+    wled
 
-    constructor(target_time, target_method, id, name) {
+    constructor(target_time, target_method, id, name, wled) {
         this.target_method = target_method
         this.target_time = target_time
         this.isActive = false
         this.name = name
         this.id = id
+        this.wled = wled
     }
 
     deactivate() {

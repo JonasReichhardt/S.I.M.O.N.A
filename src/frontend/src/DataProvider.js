@@ -10,11 +10,11 @@ export default  class DataProvider {
         return (await res.json()).alarms
     }
 
-    static async PushAlarm(time,name){
+    static async PushAlarm(time,name,wled){
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ time: time, name: name })
+            body: JSON.stringify({ time: time, name: name, wled: wled })
           };
         fetch(import.meta.env.VITE_API_ENDPOINT+'/alarms', requestOptions)
         .then(response => { if (!response.ok) { alert("Error posting alarm") }})

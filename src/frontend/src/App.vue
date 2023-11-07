@@ -11,6 +11,7 @@ const name = ref('')
 const deleteIndex = ref('')
 const triggerIndex = ref('')
 const file = ref(null)
+const wled_preset = ref(null)
 
 function addAlarm() {
   var t = convertToTargetDateTime()
@@ -19,7 +20,7 @@ function addAlarm() {
     alert('time or name of the alarm is undefined')
     return
   }
-  DataProvider.PushAlarm(t, n)
+  DataProvider.PushAlarm(t, n,wled_preset.value)
   fetchData()
 }
 
@@ -77,7 +78,8 @@ function uploadFile() {
   <div>
     <div>
       <h3>Create alarm</h3>
-      <input v-model="name" type="text">
+      <p>Name</p><input v-model="name" type="text">
+      <p>LED preset</p><input v-model="wled_preset" type="number">
       <input v-model="time_picker" type="time">
       <button @click="addAlarm">+</button>
     </div>
