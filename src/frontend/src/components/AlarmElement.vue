@@ -10,7 +10,7 @@ onMounted(() => {
     convertFromTargetDateTime()
 })
 
-function update(event) {
+function update() {
     const target_date = convertToTargetDateTime()
 
     if (target_date == undefined) {

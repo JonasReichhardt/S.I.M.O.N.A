@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import Alarm from './components/Alarm.vue'
+import AlarmElement from './components/AlarmElement.vue'
 import DataProvider from './DataProvider'
 import TimeHelper from "./TimeHelper";
 import 'vue3-carousel/dist/carousel.css';
@@ -74,8 +74,8 @@ function uploadFile() {
     <carousel>
       <slide :index="1">
         <div>
-          <Alarm @onDataFetch="fetchData" v-for="a of alarms" :id="a.id" :name="a.name" :targetTime="a.target_time"
-            :isActive="a.isActive" />
+          <AlarmElement @onDataFetch="fetchData" v-for="a of alarms" :id="a.id" :name="a.name" :targetTime="a.target_time"
+            :isActive="a.isActive" v-bind:key="a" />
           <h1 class="error" v-if="alarms.length == 0">No data</h1>
         </div>
       </slide>
