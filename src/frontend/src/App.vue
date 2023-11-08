@@ -3,6 +3,8 @@ import { ref, onMounted } from "vue"
 import Alarm from './components/Alarm.vue'
 import DataProvider from './DataProvider'
 import TimeHelper from "./TimeHelper";
+import 'vue3-carousel/dist/carousel.css';
+import { Carousel, Slide } from 'vue3-carousel';
 
 
 const alarms = ref([])
@@ -20,7 +22,7 @@ function addAlarm() {
     alert('time or name of the alarm is undefined')
     return
   }
-  DataProvider.PushAlarm(t, n,wled_preset.value)
+  DataProvider.PushAlarm(t, n, wled_preset.value)
   fetchData()
 }
 
@@ -32,7 +34,7 @@ function deleteAlarm() {
   }
 }
 
-function triggerAlarm(){
+function triggerAlarm() {
   var i = triggerIndex.value
   if (i > 0 || i <= alarms.value.length) {
     DataProvider.TriggerAlarm(i)
@@ -65,39 +67,52 @@ function uploadFile() {
 </script>
 
 <template>
-  <h1>S.I.M.O.N.A</h1>
-  <h2>Since I make over nights already</h2>
-
   <div>
-    <h3>Overview</h3>
-    <Alarm @onDataFetch="fetchData" v-for="a of alarms" :id="a.id" :name="a.name" :targetTime="a.target_time"
-      :isActive="a.isActive" />
-    <h1 class="error" v-if="alarms.length == 0">Loading data</h1>
-  </div>
-
-  <div>
-    <div>
-      <h3>Create alarm</h3>
-      <p>Name</p><input v-model="name" type="text">
-      <p>LED preset</p><input v-model="wled_preset" type="number">
-      <input v-model="time_picker" type="time">
-      <button @click="addAlarm">+</button>
-    </div>
-    <div>
-      <h3>Delete alarm</h3>
-      <p>Index</p><input v-model="deleteIndex" type="number" />
-      <button @click="deleteAlarm">-</button>
-    </div>
-    <div>
-      <h3>Upload alarm sound</h3>
-      <input type="file" @change="onFileChanged($event)" accept="audio/*" capture />
-      <button @click="uploadFile">Upload</button>
-    </div>
-    <div>
-      <h3>Trigger alarm</h3>
-      <p>Index</p><input v-model="triggerIndex" type="number" />
-      <button @click="triggerAlarm">Trigger</button>
-    </div>
+    <h1>S.I.M.O.N.A</h1>
+    <h2>Since I make over nights already</h2>
+    <br>
+    <carousel>
+      <slide :index="1">
+        <div>
+          <Alarm @onDataFetch="fetchData" v-for="a of alarms" :id="a.id" :name="a.name" :targetTime="a.target_time"
+            :isActive="a.isActive" />
+          <h1 class="error" v-if="alarms.length == 0">No data</h1>
+        </div>
+      </slide>
+      <slide :index="2">
+        <div>
+          <div class="div">
+            <h3>Create alarm</h3>
+            <div id="parent">
+              <div id="wide">Name<br><input v-model="name" type="text"></div>
+              <div id="wide">LED preset<input v-model="wled_preset" type="number"></div><br>
+            </div>
+            <div>Time<br><input v-model="time_picker" type="time"><br></div>
+            <button class="btn" @click="addAlarm">+</button>
+          </div>
+          <br>
+          <div class="div">
+            <h3>Delete alarm</h3>
+            <p>Index</p><input v-model="deleteIndex" type="number" /><br>
+            <button class="btn" @click="deleteAlarm">-</button>
+          </div>
+        </div>
+      </slide>
+      <slide :index="3">
+        <div>
+        <div class="div">
+          <h3>Trigger alarm</h3>
+          <p>Index</p><input v-model="triggerIndex" type="number" /><br>
+          <button class="btn" @click="triggerAlarm">Trigger</button>
+        </div><br>
+        <div class="div">
+          <h3>Upload alarm sound</h3>
+          <input class="file" type="file" @change="onFileChanged($event)" accept="audio/*" capture /><br>
+          <button class="btn" @click="uploadFile">Upload</button>
+        </div>
+      </div>
+      </slide>
+    </carousel>
   </div>
 </template>
 
@@ -108,13 +123,21 @@ function uploadFile() {
   color: brown;
 }
 
-input[time] {
-  font-size: 36px;
-  width: 180px;
+#parent {
+  display: flex;
 }
 
-button {
-  font-size: 36px;
-  width: 180px;
+#wide {
+  flex: 1;
+}
+
+.file {
+  width: 200px;
+  font-size: 25px;
+  border-radius: 0px;
+}
+
+.btn {
+  margin-top: 10px;
 }
 </style>

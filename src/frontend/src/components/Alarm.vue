@@ -45,32 +45,18 @@ function convertToTargetDateTime() {
 </script>
 
 <template>
-    <div>
+    <div class="div">
         <h4>{{ name }}</h4>
         <input v-model="time_picker" type="time" />
         <button @click="update">Save</button>
         <button v-if="!isActive" @click="activate">Activate</button>
-        <button v-if="isActive" @click="deactivate">Deactivate</button>
+        <div><button v-if="isActive" @click="deactivate">Deactivate</button></div>
     </div>
+    <br>
 </template>
 
 <style scoped>
-div {
-    background-color: coral;
-    border-style: dashed;
-}
-
-input[type=time] {
-    font-size: 36px;
-    width: 180px;
-}
-
 h4 {
     font-size: 25px;
-}
-
-button {
-    font-size: 36px;
-    width: 150px;
 }
 </style>
