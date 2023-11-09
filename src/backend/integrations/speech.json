@@ -1,0 +1,24 @@
+{
+    "quotes": [
+        "Think of yourself as dead. you have lived your life. Now, take what's left, and live it properly.",
+        "By going within. Nowhere you can go is more peaceful - more free of interruptions - than your own soul.",
+        "You have power over your mind - not outside events. Realize this, and you will find strength.",
+        "The happiness of your life depends upon the quality of your thoughts; therefore guard accordingly.",
+        "Do not try to be on the side of the majority, but live according to your inner laws."
+    ],
+    "greetings": [
+        "Good morning [NAME]",
+        "Ah you are finally awake",
+        "Hello Sir",
+        "May I have your attention",
+        "Good day [NAME]"
+    ],
+    "weather": [
+        "The temperature outside is currently [TEMP] degrees celcius. The weather condition is [WEATHER] with wind speeds of [WIND] meters per second",
+        "The current weather is [WEATHER] with [TEMP] degrees celcius which feel like [FTEMP]",
+        "Current temperature is [TEMP] degrees celcius with wind speeds of [WIND] meters per second which make the temperature feel like [FTEMP] degrees"
+    ],
+    "layouts": [
+        "G W Q"
+    ]
+}

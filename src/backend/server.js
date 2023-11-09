@@ -7,6 +7,7 @@ import Alarm from './alarm.js'
 import WLED from './integrations/wled.js'
 import Blinds from './integrations/blinds.js'
 import Audio from './integrations/audio.js'
+import Speech from './integrations/speech.js'
 
 //var alarms = [new Alarm(0, activation, 0, 'WakeUp', 1)]
 var alarms = []
@@ -220,7 +221,14 @@ function activation(alarm) {
     }
 
     if (settings.audio.active) {
-        Audio.play(settings.audio.storage, settings.audio.file)
+        // generate speech file
+        const sp = settings.audio.speech
+        if(sp.active){
+            Speech.generate_speech(sp.config.greet_name,sp.config.location,sp.config.voice_id)
+            Audio.play(settings.audio.storage, 'daily.mp3')
+        }else{
+            Audio.play(settings.audio.storage, settings.audio.file)
+        }
     }
 }
 
