@@ -3,6 +3,6 @@
         "command": "start"
     },
     "posix":{
-        "command": "mpg321"
+        "command": "mpg321 -q -g [VOLUME]"
     }
 }

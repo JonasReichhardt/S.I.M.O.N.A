@@ -5,9 +5,12 @@ import path from 'path';
 
 export default class Audio {
     static get CONFIG_PATH() {return './integrations/audio.json'}
+    static get VOLUME_KEY() {return '[VOLUME]'}
 
-    static async play(storage,file) {
-        execute_command(load_command() + ' ' + path.join(storage,file))
+    static async play(storage,file,volume=0) {
+        var command = load_command(volume) + ' ' + path.join(storage,file)
+        console.log("executing "+command)
+        execute_command(command)
     }
 }
 
@@ -17,7 +20,7 @@ function execute_command(command){
     })
 }
 
-function load_command(){
+function load_command(volume){
     var data = fs.readFileSync(Audio.CONFIG_PATH, 'utf8', (err) => {
         if (err) { console.error(err) }
     })
@@ -27,7 +30,11 @@ function load_command(){
     if (process.platform === 'win32'){
         command = json.win32.command
     }else{
+        // volume setting is only used on posix OS
         command = json.posix.command
+        if(command.contains(VOLUME_KEY) && volume > 0){
+            command = command.replace(VOLUME_KEY,volume)
+        }
     }
     return command
 }

@@ -225,9 +225,9 @@ function activation(alarm) {
         const sp = settings.audio.speech
         if(sp.active){
             Speech.generate_speech(sp.config.greet_name,sp.config.location,sp.config.voice_id)
-            Audio.play(settings.audio.storage, 'daily.mp3')
+            Audio.play(settings.audio.storage, 'daily.mp3',settings.audio.volume)
         }else{
-            Audio.play(settings.audio.storage, settings.audio.file)
+            Audio.play(settings.audio.storage, settings.audio.filet,settings.audio.volume)
         }
     }
 }
