@@ -10,20 +10,32 @@ echo -e "${blue}${bold}${uline}[S.I.M.O.N.A | Installing application]${reset}"
 echo " "
 
 echo -e "${green}${bold}[Installing OS dependencies]${reset}"
+echo " "
 
 echo -e "${green}Installing audio player...${reset}"
 sudo apt-get install mpg321 -y
+echo " "
 
 echo -e "${green}Installing gpio library...${reset}"
 sudo apt-get install pigpio -y
+echo " "
 
 echo -e "${green}Installing runtime environment...${reset}"
 sudo apt-get install npm -y
-
 echo " "
+
 echo -e "${green}${bold}[S.I.M.O.N.A | Versions]${reset}"
-mpg321 -v
-pigpio -v
+echo -e "${green}mpg321${reset}"
+mpg321 -V
+echo " "
+echo -e "${green}mpg321${reset}"
+pigpiod -v
+echo " "
+echo -e "${green}mpg321${reset}"
 node -v
+echo " "
+echo -e "${green}mpg321${reset}"
 npm -v
+echo " "
+
 
