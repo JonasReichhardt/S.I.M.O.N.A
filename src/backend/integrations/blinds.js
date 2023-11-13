@@ -1,4 +1,10 @@
-import Gpio from 'pigpio-mock'
+let Gpio
+try{
+    Gpio = (await import('pigpio')) 
+}catch(Exception){
+    console.log('pigpio not found trying to use pigpio-mock')
+    Gpio = (await import('pigpio-mock')) 
+}
 
 const SLEEP = 5
 const DIR = 6
@@ -12,11 +18,6 @@ const dir_pin = new Gpio.Gpio(DIR, { mode: Gpio.OUTPUT });
 const step_pin = new Gpio.Gpio(STEP, { mode: Gpio.OUTPUT });
 
 export default class Blinds{
-
-    static async open(ip){
-        await fetch('http://' + ip + '/open').then(res => res.text()).then((body)=>console.log(body))
-    }
-
     static move(distance){
         const revs = distance / CIRCUMFERENCE
     

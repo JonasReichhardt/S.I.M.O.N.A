@@ -146,8 +146,8 @@ function load_app_settings() {
 
         var activeActions = []
         if (settings.audio.active) { activeActions.push('Audio') }
-        if (settings.wled.activate) { activeActions.push('LEDs') }
-        if (settings.blinds.activate) { activeActions.push('Blinds') }
+        if (settings.wled.active) { activeActions.push('LEDs') }
+        if (settings.blinds.active) { activeActions.push('Blinds') }
 
         console.log('%s | loaded appsettings using [%s] integrations', time(), activeActions.join())
     } catch (err) {
@@ -229,8 +229,7 @@ async function activation(alarm) {
     }
 
     if (settings.blinds.active) {
-        //Blinds.open(settings.blinds.instance)
-        Blinds.move(1000) // move 1000mm
+        Blinds.move(settings.blinds.distance) // move 1000mm
     }
 
     if (settings.audio.active) {
