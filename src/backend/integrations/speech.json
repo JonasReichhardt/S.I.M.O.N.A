@@ -20,5 +20,8 @@
     ],
     "layouts": [
         "G W Q"
-    ]
+    ],
+    "errors": {
+        "quota_reached": "quota_reached.mp3"
+    }
 }

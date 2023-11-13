@@ -3,9 +3,10 @@ import process from 'process';
 import fs from 'fs'
 import path from 'path';
 
+const VOLUME_KEY = '[VOLUME]'
+
 export default class Audio {
     static get CONFIG_PATH() {return './integrations/audio.json'}
-    static get VOLUME_KEY() {return '[VOLUME]'}
 
     static async play(storage,file,volume=0) {
         var command = load_command(volume) + ' ' + path.join(storage,file)

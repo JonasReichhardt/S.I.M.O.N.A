@@ -44,10 +44,22 @@ function upload_file(req, res) {
         res.sendStatus(403)
         return
     }
-
+    
+    // create storage dir if needed
+    if(!fs.existsSync(settings.audio.storage)){
+        fs.mkdirSync(settings.audio.storage)
+    }
+    
+    // return if file exists
+    if(fs.existsSync(settings.audio.storage + '/' + file.name)){
+        res.sendStatus(403)
+        return
+    }
+    
     fs.writeFile(settings.audio.storage + '/' + file.name, file.data, (err) => {
         if (err) { console.log(err) }
     })
+    console.log('Successfully uploaded %s',file.name)
 
     res.sendStatus(200)
 }
@@ -224,10 +236,10 @@ async function activation(alarm) {
         // generate speech file
         const sp = settings.audio.speech
         if(sp.active){
-            await Speech.generate_speech(sp.config.greet_name,sp.config.location,sp.config.voice_id)
-            Audio.play(settings.audio.storage, 'daily.mp3',settings.audio.volume)
+            var filename = await Speech.generate_speech(sp.config.greet_name,sp.config.location,sp.config.voice_id,settings.audio.storage)
+            Audio.play(settings.audio.storage, filename,settings.audio.volume)
         }else{
-            Audio.play(settings.audio.storage, settings.audio.filet,settings.audio.volume)
+            Audio.play(settings.audio.storage, settings.audio.file,settings.audio.volume)
         }
     }
 }

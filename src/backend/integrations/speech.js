@@ -2,10 +2,12 @@ import fs from 'fs'
 import fetch from 'node-fetch'
 import path from 'path';
 
+const FILENAME = 'daily.mp3'
+
 export default class Speech {
     static get CONFIG_PATH() { return './integrations/' }
 
-    static async generate_speech(greet_name, location, voice_id) {
+    static async generate_speech(greet_name, location, voice_id, storage) {
         const config = load_config(path.join(this.CONFIG_PATH, 'speech.json'))
         const keys = load_config(path.join(this.CONFIG_PATH, 'apikeys.json'))
 
@@ -16,7 +18,7 @@ export default class Speech {
         for (var i in layout) {
             if (layout[i] === 'G') {
                 var greeting = config.greetings[randomIndex(config.greetings.length)]
-                speech += infill_data(greeting, greeting_keywords) + '.\n'
+                speech += infill_data(greeting, greeting_keywords)
             }
             if (layout[i] === 'W') {
                 var weather = config.weather[randomIndex(config.weather.length)]
@@ -24,14 +26,15 @@ export default class Speech {
                 if (data == null) {
                     continue
                 }
-                speech += infill_data(weather, data) + '.\n'
+                speech += infill_data(weather, data)
             }
             if (layout[i] === 'Q') {
-                speech += 'Your daily quote is.\n' + config.quotes[randomIndex(config.quotes.length)] + '\n'
+                speech += 'Your daily quote is.' + config.quotes[randomIndex(config.quotes.length)]
             }
         }
 
-        await upload_speech(speech, keys.Elevenlabs, voice_id)
+        var success = await upload_speech(speech, keys.Elevenlabs, voice_id, storage)
+        return success ? FILENAME : config.errors['quota_reached']
     }
 }
 
@@ -42,17 +45,16 @@ function load_config(file) {
 }
 
 
-async function upload_speech(speech, elevenKey, voice_id) {
+async function upload_speech(speech, elevenKey, voice_id,storage) {
     // TODO make sure that file is written to disk 
-    const filepath = './persistence/audio/daily.mp3'
+    const filepath = storage + '/' + FILENAME
     if (fs.existsSync(filepath)) {
         fs.rmSync(filepath)
-        console.log('deleted daily.mp3')
     }
 
     var body = JSON.stringify({
         text: speech, model_id: "eleven_monolingual_v1",
-        voice_settings: { stability: 0.5, similarity_boost: 0.5, style: 0.5, use_speaker_boost: true }
+        voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.0, use_speaker_boost: true }
     })
 
     const requestOptions = {
@@ -63,13 +65,14 @@ async function upload_speech(speech, elevenKey, voice_id) {
     var res = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' + voice_id, requestOptions)
     if (!res.ok) {
         var json = await res.json()
-        if(json.status.includes('quota')){
-            // TODO generate and play status response
+        console.log(json)
+        if(json.status != undefined && json.status.includes('quota')){
+            return false
         }
     } else {
         var bf = await res.arrayBuffer()
         fs.writeFileSync(filepath, Buffer.from(bf))
-        console.log('generated daily.mp3')
+        return true
     }
 }
 
