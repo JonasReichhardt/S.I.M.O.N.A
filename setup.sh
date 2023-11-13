@@ -28,13 +28,13 @@ echo -e "${green}${bold}[S.I.M.O.N.A | Versions]${reset}"
 echo -e "${green}mpg321${reset}"
 mpg321 -V
 echo " "
-echo -e "${green}mpg321${reset}"
+echo -e "${green}pigpio${reset}"
 pigpiod -v
 echo " "
-echo -e "${green}mpg321${reset}"
+echo -e "${green}node${reset}"
 node -v
 echo " "
-echo -e "${green}mpg321${reset}"
+echo -e "${green}npm${reset}"
 npm -v
 echo " "
 
