@@ -202,7 +202,7 @@ function start_webserver(server, port) {
     })
 }
 
-function activation(alarm) {
+async function activation(alarm) {
     if (alarm != undefined && alarm != null) {
         alarm.deactivate()
     }
@@ -224,7 +224,7 @@ function activation(alarm) {
         // generate speech file
         const sp = settings.audio.speech
         if(sp.active){
-            Speech.generate_speech(sp.config.greet_name,sp.config.location,sp.config.voice_id)
+            await Speech.generate_speech(sp.config.greet_name,sp.config.location,sp.config.voice_id)
             Audio.play(settings.audio.storage, 'daily.mp3',settings.audio.volume)
         }else{
             Audio.play(settings.audio.storage, settings.audio.filet,settings.audio.volume)
