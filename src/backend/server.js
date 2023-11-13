@@ -229,7 +229,8 @@ async function activation(alarm) {
     }
 
     if (settings.blinds.active) {
-        Blinds.open(settings.blinds.instance)
+        //Blinds.open(settings.blinds.instance)
+        Blinds.move(1000) // move 1000mm
     }
 
     if (settings.audio.active) {
