@@ -1,4 +1,4 @@
-import Gpio from 'pigpio-mock'
+import Gpio from 'pigpio'
 
 const SLEEP = 5
 const DIR = 6
@@ -18,14 +18,18 @@ function sleep(milliseconds) {
 sleep_pin.digitalWrite(1)
 dir_pin.digitalWrite(1)
 
+var start = new Date().getTime();
 for(var i = 0;i<200;i++){
-    step_pin.digitalWrite(1)
-    console.log("stepping")
-    sleep(10)
-    step_pin.digitalWrite(0)
-    sleep(10)
+    step_pin.trigger(100,1)
+    sleep(2)
 }
+var stop = new Date().getTime() - start
+console.log("One rotation took %d s",stop/1000)
 
 sleep_pin.digitalWrite(0)
+
+
+
+
 
 
