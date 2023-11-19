@@ -33,7 +33,7 @@ function load_command(volume){
     }else{
         // volume setting is only used on posix OS
         command = json.posix.command
-        if(command.contains(VOLUME_KEY) && volume > 0){
+        if(command.includes(VOLUME_KEY) && volume > 0){
             command = command.replace(VOLUME_KEY,volume)
         }
     }
