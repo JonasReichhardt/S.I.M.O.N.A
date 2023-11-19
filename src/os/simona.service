@@ -1,0 +1,11 @@
+[Unit]
+Description=S.I.M.O.N.A service
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+ExecStart=/usr/bin/bash /home/nomad/S.I.M.O.N.A/fast_startup.sh
+Type=simple
+
+[Install]
+WantedBy=default.target
