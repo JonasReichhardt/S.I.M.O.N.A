@@ -228,10 +228,6 @@ async function activation(alarm) {
         }
     }
 
-    if (settings.blinds.active) {
-        Blinds.move(settings.blinds.distance) // move 1000mm
-    }
-
     if (settings.audio.active) {
         // generate speech file
         const sp = settings.audio.speech
@@ -241,6 +237,10 @@ async function activation(alarm) {
         }else{
             Audio.play(settings.audio.storage, settings.audio.file,settings.audio.volume)
         }
+    }
+
+    if (settings.blinds.active) {
+        Blinds.move(settings.blinds.distance) // move 1000mm
     }
 }
 

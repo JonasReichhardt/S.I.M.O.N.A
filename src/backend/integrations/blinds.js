@@ -1,3 +1,5 @@
+import process from process
+
 let Gpio
 try{
     Gpio = (await import('pigpio')) 
@@ -26,7 +28,7 @@ export default class Blinds{
         var start = new Date().getTime();
         for(var i = 0;i<revs * STEPS_PER_REV;i++){
             step_pin.trigger(100,1)
-            sleep(2)
+            sleepMicroseconds(2000)
         }
         var stop = new Date().getTime() - start
         sleep_pin.digitalWrite(0)
@@ -34,9 +36,10 @@ export default class Blinds{
     }
 }
 
-function sleep(milliseconds) {
-    var start = new Date().getTime();
+function sleepMicroseconds(microseconds) {
+    const nanoseconds = microseconds * 1000
+    const start = process.hrtime.bigint()
     for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds) { break; }
+        if ((process.hrtime.bigint() - start) >= nanoseconds) { break; }
     }
 }
