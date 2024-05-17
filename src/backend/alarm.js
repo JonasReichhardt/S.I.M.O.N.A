@@ -7,14 +7,18 @@ export default class Alarm {
     isActive
     name
     wled
+    greet_names
+    voice_id
 
-    constructor(target_time, target_method, id, name, wled) {
+    constructor(target_time, target_method, id, name, wled,greet_names,voice_id) {
         this.target_method = target_method
         this.target_time = target_time
         this.isActive = false
         this.name = name
         this.id = id
         this.wled = wled
+        this.greet_names = greet_names
+        this.voice_id = voice_id
     }
 
     deactivate() {

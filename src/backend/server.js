@@ -9,7 +9,7 @@ import Blinds from './integrations/blinds.js'
 import Audio from './integrations/audio.js'
 import Speech from './integrations/speech.js'
 
-//var alarms = [new Alarm(0, activation, 0, 'WakeUp', 1)]
+//var alarms = [new Alarm(0, activation, 0, 'WakeUp', 1,["Jonas","Max"],"siZLcrlF5Br7qpxzQThB")]
 var alarms = []
 var settings
 
@@ -160,7 +160,7 @@ function load_state() {
     try {
         var data = JSON.parse(fs.readFileSync('./persistence/state.json', 'utf8'))
         for (const el of data) {
-            var alarm = new Alarm(el.target_time, activation, el.id, el.name,el.wled)
+            var alarm = new Alarm(el.target_time, activation, el.id, el.name,el.wled,el.greet_names,el.voice_id)
             if (el.isActive) {
                 alarm.activate()
             }
@@ -232,7 +232,15 @@ async function activation(alarm) {
         // generate speech file
         const sp = settings.audio.speech
         if(sp.active){
-            var filename = await Speech.generate_speech(sp.config.greet_name,sp.config.location,sp.config.voice_id,settings.audio.storage)
+            var greeting = alarm.greet_names;
+            var vid = alarm.voice_id;
+            if(greeting[0]==null){
+                greeting = sp.config.default_greet_names
+            }
+            if(vid==null){
+                vid = sp.config.default_voice_id
+            }
+            var filename = await Speech.generate_speech(greeting,sp.config.location,vid,settings.audio.storage)
             Audio.play(settings.audio.storage, filename,settings.audio.volume)
         }else{
             Audio.play(settings.audio.storage, settings.audio.file,settings.audio.volume)

@@ -7,11 +7,11 @@ const FILENAME = 'daily.mp3'
 export default class Speech {
     static get CONFIG_PATH() { return './integrations/' }
 
-    static async generate_speech(greet_name, location, voice_id, storage) {
+    static async generate_speech(greet_names, location, voice_id, storage) {
         const config = load_config(path.join(this.CONFIG_PATH, 'speech.json'))
         const keys = load_config(path.join(this.CONFIG_PATH, 'apikeys.json'))
 
-        const greeting_keywords = { "[NAME]": greet_name, "[NAME2]": "Chaki" }
+        const greeting_keywords = { "[NAME]": greet_names.join(',') }
 
         const layout = (config.layouts[randomIndex(config.layouts.length)]).split(' ')
         var speech = ""
@@ -45,9 +45,12 @@ function load_config(file) {
 }
 
 
-async function upload_speech(speech, elevenKey, voice_id,storage) {
+async function upload_speech(speech, elevenKey, voice_id, storage) {
     // TODO make sure that file is written to disk 
     const filepath = storage + '/' + FILENAME
+    if(!fs.existsSync(storage)){
+        fs.mkdirSync(storage)
+    }
     if (fs.existsSync(filepath)) {
         fs.rmSync(filepath)
     }
@@ -66,7 +69,7 @@ async function upload_speech(speech, elevenKey, voice_id,storage) {
     if (!res.ok) {
         var json = await res.json()
         console.log(json)
-        if(json.status != undefined && json.status.includes('quota')){
+        if (json.status != undefined && json.status.includes('quota')) {
             return false
         }
     } else {
