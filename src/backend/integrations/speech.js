@@ -7,6 +7,18 @@ const FILENAME = 'daily.mp3'
 export default class Speech {
     static get CONFIG_PATH() { return './integrations/' }
 
+    static async set_api_keys(elevenKey,owmKey){
+        var p = path.join(this.CONFIG_PATH, 'apikeys.json')
+        var keys = load_config(p)
+        if(elevenKey != null){
+            keys.Elevenlabs = elevenKey
+        }
+        if(owmKey != null){
+            keys.OpenWeatherMap = owmKey
+        }
+        save_config(p,keys)
+    }
+
     static async generate_speech(greet_names, location, voice_id, storage) {
         const config = load_config(path.join(this.CONFIG_PATH, 'speech.json'))
         const keys = load_config(path.join(this.CONFIG_PATH, 'apikeys.json'))
@@ -44,6 +56,11 @@ function load_config(file) {
     }))
 }
 
+function save_config(file,keys) {
+    return fs.writeFileSync(file,keys, 'utf8', (err) => {
+        if (err) { console.error(err) }
+    })
+}
 
 async function upload_speech(speech, elevenKey, voice_id, storage) {
     // TODO make sure that file is written to disk 
