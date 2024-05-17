@@ -50,5 +50,5 @@ echo " "
 sudo dkms status
 echo " "
 
-read -p "Press any key to reboot"
+read -r -p "Press any key to reboot"
 sudo reboot

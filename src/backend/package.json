@@ -17,6 +17,7 @@
     "fs": "0.0.1-security",
     "ip": "^1.1.8",
     "node-fetch": "^3.3.2",
-    "pigpio-mock": "^0.0.1"
+    "pigpio-mock": "^0.0.1",
+    "process": "^0.11.10"
   }
 }
